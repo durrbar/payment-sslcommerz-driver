@@ -1,0 +1,28 @@
+{
+    "name": "durrbar/payment-sslcommerz-driver",
+    "description": "A Laravel package to integrate the sslcommerz Payment Gateway with the durrbar/payment-module.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kid Max",
+            "email": "kidmax285@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Durrbar\\PaymentSSLCommerzDriver\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "^11.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Durrbar\\PaymentSSLCommerzDriver\\Providers\\SSLCommerzServiceProvider"
+            ]
+        }
+    }
+}
