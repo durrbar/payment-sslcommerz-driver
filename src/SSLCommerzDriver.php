@@ -5,7 +5,6 @@ namespace Durrbar\PaymentSSLCommerzDriver;
 use Illuminate\Support\Facades\Http;
 use Modules\Order\Models\Order;
 use Modules\Payment\Drivers\BasePaymentDriver;
-use Modules\Payment\Drivers\SslCommerz\SslCommerzNotification;
 
 class SSLCommerzDriver extends BasePaymentDriver
 {
