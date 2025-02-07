@@ -3,7 +3,7 @@
 $apiDomainSSLCZ = env('SSLCOMMERZ_SANDBOX') ? "https://sandbox.sslcommerz.com" : "https://securepay.sslcommerz.com";
 
 return [
-    'driver' => \Modules\Payment\Drivers\SSLCommerz\SSLCommerzDriver::class,
+    'driver' => \Durrbar\PaymentSSLCommerzDriver\SSLCommerzDriver::class,
     'sandbox' => env('SSLCOMMERZ_SANDBOX', true),
     'apiCredentials' => [
         'store_id' => env("SSLCOMMERZ_STORE_ID"),
