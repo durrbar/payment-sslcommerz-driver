@@ -10,14 +10,14 @@ class SSLCommerzDriver extends BasePaymentDriver
 {
     private $store_id;
     private $store_password;
-    private $sandbox_mode;
+    private $sandbox;
 
     public function __construct()
     {
         // Directly initialize configuration values in the constructor
         $this->store_id = config('payment.providers.sslcommerz.apiCredentials.store_id');
         $this->store_password = config('payment.providers.sslcommerz.apiCredentials.store_password');
-        $this->sandbox_mode = config('payment.providers.sslcommerz.sandbox', true);
+        $this->sandbox = config('payment.providers.sslcommerz.sandbox', true);
     }
 
     public function initiatePayment(mixed $payment): array
@@ -160,7 +160,7 @@ class SSLCommerzDriver extends BasePaymentDriver
 
     private function getEndpoint($type = 'payment')
     {
-        $baseUrl = $this->sandbox_mode
+        $baseUrl = $this->sandbox
             ? 'https://sandbox.sslcommerz.com'
             : 'https://secure.sslcommerz.com';
 
