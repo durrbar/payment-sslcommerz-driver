@@ -4,22 +4,41 @@ $apiDomainSSLCZ = env('SSLCOMMERZ_SANDBOX') ? "https://sandbox.sslcommerz.com" :
 
 return [
     'driver' => \Durrbar\PaymentSSLCommerzDriver\SSLCommerzDriver::class,
-    'sandbox' => env('SSLCOMMERZ_SANDBOX', true),
-    'apiCredentials' => [
-        'store_id' => env("SSLCOMMERZ_STORE_ID"),
-        'store_password' => env("SSLCOMMERZ_STORE_PASSWORD"),
+    /**
+     * Enable/Disable Sandbox mode
+     */
+    'sandbox' => env('SSLCOMMERZ_SANDBOX', true),    
+
+    /**
+     * The API credentials given from SSLCommerz
+     */
+    'store' => [
+        'id' => env('SSLCOMMERZ_STORE_ID'),
+        'password' => env('SSLCOMMERZ_STORE_PASSWORD'),
+        'currency' => env('SSLCOMMERZ_STORE_CURRENCY', 'BDT'),
     ],
-    'apiUrl' => [
-        'make_payment' => "/gwprocess/v4/api.php",
-        'transaction_status' => "/validator/api/merchantTransIDvalidationAPI.php",
-        'order_validate' => "/validator/api/validationserverAPI.php",
-        'refund_payment' => "/validator/api/merchantTransIDvalidationAPI.php",
-        'refund_status' => "/validator/api/merchantTransIDvalidationAPI.php",
+
+    /**
+     * Route names for success/failure/cancel
+     */
+    'route' => [
+        'success' => '/success',
+        'failure' => '/fail',
+        'cancel' => '/cancel',
+        'ipn' => '/ipn',
     ],
-    'apiDomain' => $apiDomainSSLCZ,
-    'connect_from_localhost' => env("IS_LOCALHOST", false),
-    'success_url' => '/success',
-    'failed_url' => '/fail',
-    'cancel_url' => '/cancel',
-    'ipn_url' => '/ipn',
+
+    /**
+     * Product profile required from SSLC
+     * By default it is "general"
+     *
+     * AVAILABLE PROFILES
+     *  general
+     *  physical-goods
+     *  non-physical-goods
+     *  airline-tickets
+     *  travel-vertical
+     *  telecom-vertical
+     */
+    'product_profile' => 'general',
 ];

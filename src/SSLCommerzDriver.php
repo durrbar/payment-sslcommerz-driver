@@ -2,12 +2,23 @@
 
 namespace Durrbar\PaymentSSLCommerzDriver;
 
+use Durrbar\PaymentSSLCommerzDriver\Config\SslcommerzConfig;
+use Durrbar\PaymentSSLCommerzDriver\Http\SslcommerzHttpClient;
+use Durrbar\PaymentSSLCommerzDriver\Payment\SslcommerzHandler;
+use Durrbar\PaymentSSLCommerzDriver\Payment\SslcommerzPayment;
+use Durrbar\PaymentSSLCommerzDriver\Payment\SslcommerzRefund;
 use Illuminate\Support\Facades\Http;
-use Modules\Order\Models\Order;
 use Modules\Payment\Drivers\BasePaymentDriver;
+use Modules\Payment\Enums\PaymentStatus;
 
 class SSLCommerzDriver extends BasePaymentDriver
 {
+    protected SslcommerzConfig $config;
+    protected SslcommerzHttpClient $httpClient;
+    protected SslcommerzPayment $payment;
+    protected SslcommerzRefund $refund;
+    protected SslcommerzHandler $handler;
+
     private $store_id;
     private $store_password;
     private $sandbox;
@@ -18,22 +29,18 @@ class SSLCommerzDriver extends BasePaymentDriver
         $this->store_id = config('payment.providers.sslcommerz.apiCredentials.store_id');
         $this->store_password = config('payment.providers.sslcommerz.apiCredentials.store_password');
         $this->sandbox = config('payment.providers.sslcommerz.sandbox', true);
+
+        $this->config = new SslcommerzConfig();
+        $this->httpClient = new SslcommerzHttpClient($this->config);
+        $this->payment = new SslcommerzPayment($this->config, $this->httpClient);
+        $this->refund = new SslcommerzRefund($this->config, $this->httpClient);
+        $this->handler = new SslcommerzHandler($this->config, $this->httpClient, $this);
     }
 
     public function initiatePayment(mixed $payment): array
     {
-        dd($payment);
-        // Prepare the complete transaction data
-        $post_data = $this->preparePaymentData($payment);
-
-        // Insert or update the order status as "Pending"
-        $this->updatePaymentStatus($post_data['tran_id'], 'Pending', $post_data);
-
-        // Instantiate the SSLCommerz notification service
-        $sslc = new SSLCommerzNotification();
-
         // Initiate the payment
-        $payment_options = $sslc->makePayment($post_data, 'hosted');
+        $payment_options = $this->payment->initiatePayment($payment);
 
         // Return the payment options or an empty array
         return is_array($payment_options) ? $payment_options : [];
@@ -41,10 +48,16 @@ class SSLCommerzDriver extends BasePaymentDriver
 
     public function handleSuccess(array $data): array
     {
-        return $this->processPaymentStatus($data['tran_id'], 'Pending', function ($order_details) use ($data) {
-            $sslc = new SSLCommerzNotification();
-            if ($sslc->orderValidate($data, $data['tran_id'], $data['amount'], $data['currency'])) {
-                $this->updatePaymentStatus($order_details['tran_id'], 'Processing', []);
+        return $this->processPaymentStatus($data['tran_id'], PaymentStatus::PENDING->value, function ($payment) use ($data) {
+            $payload = [
+                'store_id' => $this->store_id,
+                'store_password' => $this->store_password,
+            ];
+
+            if ($this->payment->validatePayment($payload, $data['tran_id'], $data['amount'], $data['currency'])) {
+                $this->updatePayment($payment, [
+                    'status' => PaymentStatus::PROCESSING->value,
+                ]);
                 return [
                     'status' => 'success',
                     'message' => 'Transaction is successfully completed.'
@@ -56,32 +69,38 @@ class SSLCommerzDriver extends BasePaymentDriver
                 'message' => 'Transaction verification failed.'
             ];
         });
+
+        // return $this->handler->handleSuccess($data);
     }
 
     public function handleFailure(array $data): array
     {
-        return $this->processPaymentStatus($data['tran_id'], 'Pending', function ($order_details) use ($data) {
+        return $this->processPaymentStatus($data['tran_id'], PaymentStatus::PENDING->value, function ($order_details) use ($data) {
             // Add logic for handling failure, such as logging or sending notifications
-            $this->updatePaymentStatus($order_details['tran_id'], 'Failed', []);
+            $this->updatePaymentStatus($order_details['tran_id'], PaymentStatus::FAILED->value, []);
 
             return [
                 'status' => 'error',
                 'message' => 'Transaction failed. Order status updated to Failed.'
             ];
         });
+
+        return $this->handler->handleFailure($data);
     }
 
     public function handleCancel(array $data): array
     {
-        return $this->processPaymentStatus($data['tran_id'], 'Pending', function ($order_details) use ($data) {
+        return $this->processPaymentStatus($data['tran_id'], PaymentStatus::PENDING->value, function ($order_details) use ($data) {
             // Handle order cancellation, update status to 'Cancelled'
-            $this->updatePaymentStatus($data['tran_id'], 'Cancelled', []);
+            $this->updatePaymentStatus($data['tran_id'], PaymentStatus::CANCELED->value, []);
 
             return [
                 'status' => 'error',
                 'message' => 'Transaction cancelled. Order status updated to Cancelled.'
             ];
         });
+
+        return $this->handler->handleCancel($data);
     }
 
     public function handleIPN(array $data): array
@@ -90,12 +109,16 @@ class SSLCommerzDriver extends BasePaymentDriver
             return ['status' => 'error', 'message' => 'Invalid Data'];
         }
 
-        return $this->processPaymentStatus($data['tran_id'], 'Pending', function ($order_details) use ($data) {
-            $sslc = new SSLCommerzNotification();
-            $validation = $sslc->orderValidate($data, $data['tran_id'], $order_details->amount, $order_details->currency);
+        return $this->processPaymentStatus($data['tran_id'], PaymentStatus::PENDING->value, function ($order_details) use ($data) {
+            $payload = [
+                'store_id' => $this->store_id,
+                'store_password' => $this->store_password,
+            ];
+
+            $validation = $this->payment->validatePayment($payload, $data['tran_id'], $order_details->amount, $order_details->currency);
 
             if ($validation) {
-                $this->updatePaymentStatus($data['tran_id'], 'Processing', []);
+                $this->updatePaymentStatus($data['tran_id'], PaymentStatus::PROCESSING->value, []);
                 return [
                     'status' => 'success',
                     'message' => 'Transaction is successfully Completed'
@@ -107,6 +130,8 @@ class SSLCommerzDriver extends BasePaymentDriver
                 'message' => 'Transaction validation failed'
             ];
         });
+
+        return $this->handler->handleIPN($data);
     }
 
     public function verifyPayment(string $transactionId): array
@@ -130,6 +155,8 @@ class SSLCommerzDriver extends BasePaymentDriver
             'amount' => $response['amount'],
             'currency' => $response['currency'],
         ];
+
+        return $this->payment->verifyPayment($payload, $transactionId, $amount, $currency);
     }
 
     public function refundPayment(mixed $payment): array
@@ -156,6 +183,8 @@ class SSLCommerzDriver extends BasePaymentDriver
             'tran_id' => $response['tran_id'],
             'refund_amount' => $response['refund_amount'],
         ];
+
+        return $this->refund->refundPayment($payment);
     }
 
     private function getEndpoint($type = 'payment')
@@ -183,70 +212,5 @@ class SSLCommerzDriver extends BasePaymentDriver
     {
         // Logic to validate IPN (you can add more complex validation based on SSLCommerz documentation)
         return isset($data['status']) && $data['status'] === 'VALID';
-    }
-
-    private function preparePaymentData(mixed $payment): array
-    {
-        // Load shipping address if not already loaded
-        $payment->loadMissing('shippingAddress');
-
-        $order = $payment->order;
-        $customer = $order->customer;
-
-        return [
-            'total_amount' => $payment->amount,
-            'currency' => $payment->currency,
-            'tran_id' => $payment->tran_id,
-
-            // Customer Information
-            'cus_name' => $customer->name,
-            'cus_email' => $customer->email,
-            'cus_add1' => $customer->address_line_1,
-            'cus_add2' => $customer->address_line_2,
-            'cus_city' => $customer->city,
-            'cus_state' => $customer->state,
-            'cus_postcode' => $customer->postal_code,
-            'cus_country' => $customer->country,
-            'cus_phone' => $customer->mobile,
-            'cus_fax' => $customer->phone ?? '',
-
-            // Shipping Information
-            'ship_name' => $order->shippingAddress->recipient_name ?? $customer->name,
-            'ship_add1' => $order->shippingAddress->address_line_1,
-            'ship_add2' => $order->shippingAddress->address_line_2,
-            'ship_city' => $order->shippingAddress->city,
-            'ship_state' => $order->shippingAddress->state,
-            'ship_postcode' => $order->shippingAddress->postal_code,
-            'ship_country' => $order->shippingAddress->country,
-
-            // Product Information
-            'shipping_method' => $order->shipping_method ?? 'Courier',
-            'product_name' => $this->getProductNames($order),
-            'product_category' => $this->getProductCategories($order),
-            'product_profile' => $this->getProductProfile($order),
-
-            // Additional Fields
-            'value_a' => $order->id,
-            'value_b' => $payment->id,
-            'value_c' => config('app.name'),
-            'value_d' => $payment->created_at->toIso8601String(),
-        ];
-    }
-
-    private function getProductNames(Order $order): string
-    {
-        return $order->items->pluck('name')->implode(', ');
-    }
-
-    private function getProductCategories(Order $order): string
-    {
-        return $order->items->pluck('category.name')->unique()->implode(', ');
-    }
-
-    private function getProductProfile(Order $order): string
-    {
-        return $order->items->every(fn ($item) => $item->is_physical)
-            ? 'physical-goods'
-            : 'digital-goods';
     }
 }
