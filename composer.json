@@ -11,7 +11,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Durrbar\\PaymentSSLCommerzDriver\\": "src/"
+            "Durrbar\\PaymentSslcommerzDriver\\": "src/"
         }
     },
     "require": {
@@ -21,7 +21,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Durrbar\\PaymentSSLCommerzDriver\\Providers\\SSLCommerzServiceProvider"
+                "Durrbar\\PaymentSslcommerzDriver\\Providers\\SslcommerzServiceProvider"
             ]
         }
     }

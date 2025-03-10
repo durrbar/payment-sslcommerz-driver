@@ -1,22 +1,22 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver\Payment;
+namespace Durrbar\PaymentSslcommerzDriver\Payment;
 
-use Durrbar\PaymentSSLCommerzDriver\Config\SslcommerzConfig;
-use Durrbar\PaymentSSLCommerzDriver\Data\PaymentResponse;
-use Durrbar\PaymentSSLCommerzDriver\Http\SslcommerzHttpClient;
+use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
+use Durrbar\PaymentSslcommerzDriver\Data\PaymentResponse;
+use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
 use Modules\Order\Models\Order;
 use Exception;
 
 class SslcommerzPayment
 {
     /**
-     * Configuration object for SSLCommerz integration.
+     * Configuration object for Sslcommerz integration.
      */
     protected SslcommerzConfig $config;
 
     /**
-     * HTTP client for making API requests to SSLCommerz.
+     * HTTP client for making API requests to Sslcommerz.
      */
     protected SslcommerzHttpClient $httpClient;
 
@@ -26,7 +26,7 @@ class SslcommerzPayment
     protected array $data = [];
 
     /**
-     * Constructor to initialize the SSLCommerz payment integration.
+     * Constructor to initialize the Sslcommerz payment integration.
      *
      * @param SslcommerzConfig $config Configuration object containing store credentials and callback URLs.
      * @param SslcommerzHttpClient $httpClient HTTP client for making API requests.
@@ -38,9 +38,9 @@ class SslcommerzPayment
     }
 
     /**
-     * Initiates a payment request to SSLCommerz.
+     * Initiates a payment request to Sslcommerz.
      *
-     * This method prepares the necessary payload data, sends the request to the SSLCommerz API,
+     * This method prepares the necessary payload data, sends the request to the Sslcommerz API,
      * and returns a `PaymentResponse` object containing the API response.
      *
      * @param mixed $payment Payment object containing order, customer, and shipping details.
@@ -56,7 +56,7 @@ class SslcommerzPayment
             // Initialize authentication data (store ID and password).
             $this->setAuthenticationInfo();
 
-            // Send the payment request to the SSLCommerz API.
+            // Send the payment request to the Sslcommerz API.
             $response = $this->httpClient->client()
                 ->asForm()
                 ->post('/gwprocess/v4/api.php', $this->data)
@@ -64,7 +64,7 @@ class SslcommerzPayment
 
             // Validate the API response.
             if (empty($response)) {
-                throw new Exception('Empty response from SSLCommerz API.');
+                throw new Exception('Empty response from Sslcommerz API.');
             }
 
             return new PaymentResponse($response);
@@ -75,12 +75,12 @@ class SslcommerzPayment
     }
 
     /**
-     * Validates a payment using the SSLCommerz validation API.
+     * Validates a payment using the Sslcommerz validation API.
      *
      * This method checks whether the payment transaction is valid by verifying the transaction ID,
-     * amount, and currency against the response from the SSLCommerz validation API.
+     * amount, and currency against the response from the Sslcommerz validation API.
      *
-     * @param array $payload Validation payload received from SSLCommerz.
+     * @param array $payload Validation payload received from Sslcommerz.
      * @param string $transactionId The transaction ID to validate.
      * @param float $amount The transaction amount to validate.
      * @param string $currency The transaction currency (default: 'BDT').
@@ -94,7 +94,7 @@ class SslcommerzPayment
             throw new Exception('Validation ID is missing.');
         }
 
-        // Call the SSLCommerz validation API to verify the transaction.
+        // Call the Sslcommerz validation API to verify the transaction.
         $response = $this->httpClient->client()->get('/validator/api/validationserverAPI.php', [
             'val_id' => $payload['val_id'],
             'store_id' => $this->config->getStoreId(),
@@ -104,7 +104,7 @@ class SslcommerzPayment
 
         // Validate the API response.
         if (empty($response)) {
-            throw new Exception('Empty response from SSLCommerz validation API.');
+            throw new Exception('Empty response from Sslcommerz validation API.');
         }
 
         // Check for required fields and transaction status.
@@ -126,10 +126,10 @@ class SslcommerzPayment
     }
 
     /**
-     * Verifies the hash signature from an SSLCommerz response.
+     * Verifies the hash signature from an Sslcommerz response.
      *
      * This method ensures the integrity of the response by comparing the computed hash
-     * with the provided hash (`verify_sign`) from SSLCommerz.
+     * with the provided hash (`verify_sign`) from Sslcommerz.
      *
      * @param array $data Response data containing the hash signature and verification key.
      * @return bool True if the hash verification is successful; otherwise, false.
@@ -178,9 +178,6 @@ class SslcommerzPayment
      */
     private function setParams(mixed $payment): void
     {
-        // Load the shipping address if it hasn't been loaded yet.
-        $payment->loadMissing('shippingAddress');
-
         // Extract order and customer details from the payment object.
         $order = $payment->order;
         $customer = $order->customer;

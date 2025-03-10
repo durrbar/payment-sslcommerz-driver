@@ -1,6 +1,6 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver\Data;
+namespace Durrbar\PaymentSslcommerzDriver\Data;
 
 class RefundStatus
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver\Payment;
+namespace Durrbar\PaymentSslcommerzDriver\Payment;
 
-use Durrbar\PaymentSSLCommerzDriver\Config\SslcommerzConfig;
-use Durrbar\PaymentSSLCommerzDriver\Http\SslcommerzHttpClient;
+use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
+use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
 use Modules\Payment\Drivers\BasePaymentDriver;
 
 class SslcommerzHandler

@@ -1,12 +1,12 @@
 
 ---
 
-# **SSLCommerz Payment Driver for Laravel**
+# **Sslcommerz Payment Driver for Laravel**
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/durrbar/payment-sslcommerz-driver.svg?style=flat-square)](https://packagist.org/packages/durrbar/payment-sslcommerz-driver)
 [![Total Downloads](https://img.shields.io/packagist/dt/durrbar/payment-sslcommerz-driver.svg?style=flat-square)](https://packagist.org/packages/durrbar/payment-sslcommerz-driver)
 
-A Laravel package to integrate the **SSLCommerz Payment Gateway** seamlessly into your application. This package supports tokenized payments, refunds, transaction verification, and handling callbacks (IPN, success, failure, cancel). It is designed to work with the `durrbar/payment-module` for shared payment driver functionality.
+A Laravel package to integrate the **Sslcommerz Payment Gateway** seamlessly into your application. This package supports tokenized payments, refunds, transaction verification, and handling callbacks (IPN, success, failure, cancel). It is designed to work with the `durrbar/payment-module` for shared payment driver functionality.
 
 ---
 
@@ -56,8 +56,8 @@ The configuration will automatically load from `payment.providers.sslcommerz` in
 This package is designed to work seamlessly with the `PaymentService` from the `durrbar/payment-module`. All payment-related operations are handled automatically by the `PaymentService`. Simply configure the package and specify `sslcommerz` as the provider when interacting with the `PaymentService`.
 
 ### **How It Works**
-1. Install the package and configure the `.env` file with your SSLCommerz credentials.
-2. The `PaymentService` dynamically resolves this package as the driver for SSLCommerz payments.
+1. Install the package and configure the `.env` file with your Sslcommerz credentials.
+2. The `PaymentService` dynamically resolves this package as the driver for Sslcommerz payments.
 3. All payment-related operations (initiating payments, handling callbacks, refunds, etc.) are handled automatically by the `PaymentService`.
 
 No additional setup or manual integration is required beyond installing the package and adding the configuration.
@@ -66,7 +66,7 @@ No additional setup or manual integration is required beyond installing the pack
 
 ### **Supported Operations**
 The following operations are supported and handled automatically by the `PaymentService`:
-- **Initiating a Payment**: Payments are initiated using the SSLCommerz API.
+- **Initiating a Payment**: Payments are initiated using the Sslcommerz API.
 - **Handling Callbacks**: IPN, success, failure, and cancellation callbacks are processed automatically.
 - **Verifying a Payment**: Payment transactions are verified using transaction IDs.
 - **Refunding a Payment**: Refunds can be initiated and their status checked automatically.
@@ -75,7 +75,7 @@ The following operations are supported and handled automatically by the `Payment
 ---
 
 ## **Testing**
-To test the package in sandbox mode, set `SSLCOMMERZ_SANDBOX=true` in your `.env` file. Use the sandbox credentials provided by SSLCommerz.
+To test the package in sandbox mode, set `SSLCOMMERZ_SANDBOX=true` in your `.env` file. Use the sandbox credentials provided by Sslcommerz.
 
 ---
 
@@ -94,7 +94,7 @@ If you discover any security-related issues, please email the maintainer instead
 
 ## **Credits**
 - [Your Name](https://github.com/officialkidmax)
-- Inspired by [SSLCommerz API Documentation](https://developer.sslcommerz.com/doc/v4/)
+- Inspired by [Sslcommerz API Documentation](https://developer.sslcommerz.com/doc/v4/)
 
 ---
 

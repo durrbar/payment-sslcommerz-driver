@@ -1,11 +1,11 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver\Payment;
+namespace Durrbar\PaymentSslcommerzDriver\Payment;
 
-use Durrbar\PaymentSSLCommerzDriver\Config\SslcommerzConfig;
-use Durrbar\PaymentSSLCommerzDriver\Data\RefundResponse;
-use Durrbar\PaymentSSLCommerzDriver\Data\RefundStatus;
-use Durrbar\PaymentSSLCommerzDriver\Http\SslcommerzHttpClient;
+use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
+use Durrbar\PaymentSslcommerzDriver\Data\RefundResponse;
+use Durrbar\PaymentSslcommerzDriver\Data\RefundStatus;
+use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
 
 class SslcommerzRefund
 {
@@ -22,7 +22,7 @@ class SslcommerzRefund
     }
 
     /**
-     * Refund a payment through SSLCommerz.
+     * Refund a payment through Sslcommerz.
      */
     public function refundPayment(string $bankTransactionId, int|float $amount, string $reason): RefundResponse
     {
@@ -39,7 +39,7 @@ class SslcommerzRefund
     }
 
     /**
-     * Check the refund status through SSLCommerz.
+     * Check the refund status through Sslcommerz.
      */
     public function checkRefundStatus(string $refundRefId): RefundStatus
     {

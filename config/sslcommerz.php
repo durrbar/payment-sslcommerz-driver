@@ -1,16 +1,14 @@
 <?php
 
-$apiDomainSSLCZ = env('SSLCOMMERZ_SANDBOX') ? "https://sandbox.sslcommerz.com" : "https://securepay.sslcommerz.com";
-
 return [
-    'driver' => \Durrbar\PaymentSSLCommerzDriver\SSLCommerzDriver::class,
+    'driver' => \Durrbar\PaymentSslcommerzDriver\SslcommerzDriver::class,
     /**
      * Enable/Disable Sandbox mode
      */
     'sandbox' => env('SSLCOMMERZ_SANDBOX', true),    
 
     /**
-     * The API credentials given from SSLCommerz
+     * The API credentials given from Sslcommerz
      */
     'store' => [
         'id' => env('SSLCOMMERZ_STORE_ID'),
@@ -29,7 +27,7 @@ return [
     ],
 
     /**
-     * Product profile required from SSLC
+     * Product profile required from Sslc
      * By default it is "general"
      *
      * AVAILABLE PROFILES

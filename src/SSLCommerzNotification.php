@@ -1,8 +1,8 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver;
+namespace Durrbar\PaymentSslcommerzDriver;
 
-class SSLCommerzNotification extends AbstractSslCommerz
+class SslcommerzNotification extends AbstractSslCommerz
 {
     protected $data = [];
     protected $config = [];
@@ -15,7 +15,7 @@ class SSLCommerzNotification extends AbstractSslCommerz
     private $sandbox_mode;
 
     /**
-     * SSLCommerzNotification constructor.
+     * SslcommerzNotification constructor.
      */
     public function __construct()
     {
@@ -36,7 +36,7 @@ class SSLCommerzNotification extends AbstractSslCommerz
     }
 
 
-    # VALIDATE SSLCOMMERZ TRANSACTION
+    # VALIDATE SslcOMMERZ TRANSACTION
     protected function validate($merchant_trans_id, $merchant_trans_amount, $merchant_trans_currency, $post_data)
     {
         # MERCHANT SYSTEM INFO
@@ -128,8 +128,8 @@ class SSLCommerzNotification extends AbstractSslCommerz
                     return false;
                 }
             } else {
-                # Failed to connect with SSLCOMMERZ
-                $this->error = "Faile to connect with SSLCOMMERZ";
+                # Failed to connect with SslcOMMERZ
+                $this->error = "Faile to connect with SslcOMMERZ";
                 return false;
             }
         } else {
@@ -140,7 +140,7 @@ class SSLCommerzNotification extends AbstractSslCommerz
     }
 
     # FUNCTION TO CHECK HASH VALUE
-    protected function SSLCOMMERZ_hash_verify($post_data, $store_passwd = "")
+    protected function SslcOMMERZ_hash_verify($post_data, $store_passwd = "")
     {
         if (isset($post_data) && isset($post_data['verify_sign']) && isset($post_data['verify_key'])) {
             # NEW ARRAY DECLARED TO TAKE VALUE OF ALL POST
@@ -213,7 +213,7 @@ class SSLCommerzNotification extends AbstractSslCommerz
                 if (strpos($formattedResponse['failedreason'], 'Store Credential') === false) {
                     $message = $formattedResponse['failedreason'];
                 } else {
-                    $message = "Check the SSLCZ_TESTMODE and SSLCZ_STORE_PASSWORD value in your .env; DO NOT USE MERCHANT PANEL PASSWORD HERE.";
+                    $message = "Check the SslcZ_TESTMODE and SslcZ_STORE_PASSWORD value in your .env; DO NOT USE MERCHANT PANEL PASSWORD HERE.";
                 }
 
                 return $message;
@@ -291,9 +291,9 @@ class SSLCommerzNotification extends AbstractSslCommerz
 
     public function setRequiredInfo(array $info)
     {
-        $this->data['total_amount'] = $info['total_amount']; // decimal (10,2)	Mandatory - The amount which will process by SSLCommerz. It shall be decimal value (10,2). Example : 55.40. The transaction amount must be from 10.00 BDT to 500000.00 BDT
+        $this->data['total_amount'] = $info['total_amount']; // decimal (10,2)	Mandatory - The amount which will process by Sslcommerz. It shall be decimal value (10,2). Example : 55.40. The transaction amount must be from 10.00 BDT to 500000.00 BDT
         $this->data['currency'] = $info['currency']; // string (3)	Mandatory - The currency type must be mentioned. It shall be three characters. Example : BDT, USD, EUR, SGD, INR, MYR, etc. If the transaction currency is not BDT, then it will be converted to BDT based on the current convert rate. Example : 1 USD = 82.22 BDT.
-        $this->data['tran_id'] = $info['tran_id']; // string (30)	Mandatory - Unique transaction ID to identify your order in both your end and SSLCommerz
+        $this->data['tran_id'] = $info['tran_id']; // string (30)	Mandatory - Unique transaction ID to identify your order in both your end and Sslcommerz
         $this->data['product_category'] = $info['product_category']; // string (50)	Mandatory - Mention the product category. It is a open field. Example - clothing,shoes,watches,gift,healthcare, jewellery,top up,toys,baby care,pants,laptop,donation,etc
 
         // Set the SUCCESS, FAIL, CANCEL Redirect URL before setting the other parameters
@@ -311,14 +311,14 @@ class SSLCommerzNotification extends AbstractSslCommerz
          * Some transaction could be pending or customer lost his/her session, in such cases back-end IPN plays a very important role to update your backend office.
          *
          * Type: string (255)
-         * Important! Not mandatory, however better to use to avoid missing any payment notification - It is the Instant Payment Notification (IPN) URL of your website where SSLCOMMERZ will send the transaction's status (Length: 255).
-         * The data will be communicated as SSLCOMMERZ Server to your Server. So, customer session will not work.
+         * Important! Not mandatory, however better to use to avoid missing any payment notification - It is the Instant Payment Notification (IPN) URL of your website where SslcOMMERZ will send the transaction's status (Length: 255).
+         * The data will be communicated as SslcOMMERZ Server to your Server. So, customer session will not work.
 		*/
         $this->data['ipn_url'] = $this->getIPNUrl();
 
         /*
          * Type: string (30)
-         * Do not Use! If you do not customize the gateway list - You can control to display the gateway list at SSLCommerz gateway selection page by providing this parameters.
+         * Do not Use! If you do not customize the gateway list - You can control to display the gateway list at Sslcommerz gateway selection page by providing this parameters.
          * Multi Card:
             brac_visa = BRAC VISA
             dbbl_visa = Dutch Bangla VISA
@@ -371,7 +371,7 @@ class SSLCommerzNotification extends AbstractSslCommerz
     public function setCustomerInfo(array $info)
     {
         $this->data['cus_name'] = (isset($info['cus_name'])) ? $info['cus_name'] : null; // string (50)	Mandatory - Your customer name to address the customer in payment receipt email
-        $this->data['cus_email'] = (isset($info['cus_email'])) ? $info['cus_email'] : null; // string (50)	Mandatory - Valid email address of your customer to send payment receipt from SSLCommerz end
+        $this->data['cus_email'] = (isset($info['cus_email'])) ? $info['cus_email'] : null; // string (50)	Mandatory - Valid email address of your customer to send payment receipt from Sslcommerz end
         $this->data['cus_add1'] = (isset($info['cus_add1'])) ? $info['cus_add1'] : null; // string (50)	Mandatory - Address of your customer. Not mandatory but useful if provided
         $this->data['cus_add2'] = (isset($info['cus_add2'])) ? $info['cus_add2'] : null; // string (50)	Address line 2 of your customer. Not mandatory but useful if provided
         $this->data['cus_city'] = (isset($info['cus_city'])) ? $info['cus_city'] : null; // string (50)	Mandatory - City of your customer. Not mandatory but useful if provided

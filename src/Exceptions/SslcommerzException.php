@@ -1,6 +1,6 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver\Exceptions;
+namespace Durrbar\PaymentSslcommerzDriver\Exceptions;
 
 use Exception;
 

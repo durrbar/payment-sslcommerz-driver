@@ -1,8 +1,8 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver;
+namespace Durrbar\PaymentSslcommerzDriver;
 
-use Durrbar\PaymentSSLCommerzDriver\Interface\SslCommerzInterface;
+use Durrbar\PaymentSslcommerzDriver\Interface\SslCommerzInterface;
 
 abstract class AbstractSslCommerz implements SslCommerzInterface
 {
@@ -76,7 +76,7 @@ abstract class AbstractSslCommerz implements SslCommerzInterface
         if ($code == 200 & !($curlErrorNo)) {
             return $response;
         } else {
-            return "FAILED TO CONNECT WITH SSLCOMMERZ API";
+            return "FAILED TO CONNECT WITH SslcOMMERZ API";
             //return "cURL Error #:" . $err;
         }
     }
@@ -105,7 +105,7 @@ abstract class AbstractSslCommerz implements SslCommerzInterface
                 if (strpos($sslcz['failedreason'],'Store Credential') === false) {
                     $message = $sslcz['failedreason'];
                 } else {
-                    $message = "Check the SSLCZ_TESTMODE and SSLCZ_STORE_PASSWORD value in your .env; DO NOT USE MERCHANT PANEL PASSWORD HERE.";
+                    $message = "Check the SslcZ_TESTMODE and SslcZ_STORE_PASSWORD value in your .env; DO NOT USE MERCHANT PANEL PASSWORD HERE.";
                 }
                 $response = json_encode(['status' => 'fail', 'data' => null, 'message' => $message]);
             }

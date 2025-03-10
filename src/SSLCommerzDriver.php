@@ -1,17 +1,17 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver;
+namespace Durrbar\PaymentSslcommerzDriver;
 
-use Durrbar\PaymentSSLCommerzDriver\Config\SslcommerzConfig;
-use Durrbar\PaymentSSLCommerzDriver\Http\SslcommerzHttpClient;
-use Durrbar\PaymentSSLCommerzDriver\Payment\SslcommerzHandler;
-use Durrbar\PaymentSSLCommerzDriver\Payment\SslcommerzPayment;
-use Durrbar\PaymentSSLCommerzDriver\Payment\SslcommerzRefund;
+use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
+use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
+use Durrbar\PaymentSslcommerzDriver\Payment\SslcommerzHandler;
+use Durrbar\PaymentSslcommerzDriver\Payment\SslcommerzPayment;
+use Durrbar\PaymentSslcommerzDriver\Payment\SslcommerzRefund;
 use Illuminate\Support\Facades\Http;
 use Modules\Payment\Drivers\BasePaymentDriver;
 use Modules\Payment\Enums\PaymentStatus;
 
-class SSLCommerzDriver extends BasePaymentDriver
+class SslcommerzDriver extends BasePaymentDriver
 {
     protected SslcommerzConfig $config;
     protected SslcommerzHttpClient $httpClient;
@@ -19,17 +19,8 @@ class SSLCommerzDriver extends BasePaymentDriver
     protected SslcommerzRefund $refund;
     protected SslcommerzHandler $handler;
 
-    private $store_id;
-    private $store_password;
-    private $sandbox;
-
     public function __construct()
     {
-        // Directly initialize configuration values in the constructor
-        $this->store_id = config('payment.providers.sslcommerz.apiCredentials.store_id');
-        $this->store_password = config('payment.providers.sslcommerz.apiCredentials.store_password');
-        $this->sandbox = config('payment.providers.sslcommerz.sandbox', true);
-
         $this->config = new SslcommerzConfig();
         $this->httpClient = new SslcommerzHttpClient($this->config);
         $this->payment = new SslcommerzPayment($this->config, $this->httpClient);
@@ -142,7 +133,7 @@ class SSLCommerzDriver extends BasePaymentDriver
             'tran_id' => $transactionId,
         ];
 
-        // Send the request to SSLCommerz to verify the payment
+        // Send the request to Sslcommerz to verify the payment
         $response = $this->postRequest('validate', $payload);
 
         if ($response['status'] !== 'VALID') {
@@ -169,7 +160,7 @@ class SSLCommerzDriver extends BasePaymentDriver
             'refund_remarks' => 'Customer requested'
         ];
 
-        // Send the request to SSLCommerz to process the refund
+        // Send the request to Sslcommerz to process the refund
         $response = $this->postRequest('refund', $payload);
 
         if ($response['status'] !== 'SUCCESS') {
@@ -202,7 +193,7 @@ class SSLCommerzDriver extends BasePaymentDriver
         $response = Http::post($url, $data);
 
         if ($response->failed()) {
-            throw new \Exception('Failed to communicate with SSLCommerz API: ' . $response->body());
+            throw new \Exception('Failed to communicate with Sslcommerz API: ' . $response->body());
         }
 
         return $response->json();
@@ -210,7 +201,7 @@ class SSLCommerzDriver extends BasePaymentDriver
 
     public static function validateResponse(array $data): bool
     {
-        // Logic to validate IPN (you can add more complex validation based on SSLCommerz documentation)
+        // Logic to validate IPN (you can add more complex validation based on Sslcommerz documentation)
         return isset($data['status']) && $data['status'] === 'VALID';
     }
 }

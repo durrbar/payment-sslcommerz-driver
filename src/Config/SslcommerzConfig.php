@@ -1,6 +1,6 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver\Config;
+namespace Durrbar\PaymentSslcommerzDriver\Config;
 
 class SslcommerzConfig
 {

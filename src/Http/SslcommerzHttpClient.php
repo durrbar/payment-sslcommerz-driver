@@ -1,8 +1,8 @@
 <?php
 
-namespace Durrbar\PaymentSSLCommerzDriver\Http;
+namespace Durrbar\PaymentSslcommerzDriver\Http;
 
-use Durrbar\PaymentSSLCommerzDriver\Config\SslcommerzConfig;
+use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 

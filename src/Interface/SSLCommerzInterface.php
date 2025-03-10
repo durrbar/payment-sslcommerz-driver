@@ -1,7 +1,7 @@
 <?php
-namespace Durrbar\PaymentSSLCommerzDriver\Interface;
+namespace Durrbar\PaymentSslcommerzDriver\Interface;
 
-interface SSLCommerzInterface
+interface SslcommerzInterface
 {
     public function makePayment(array $data);
 
