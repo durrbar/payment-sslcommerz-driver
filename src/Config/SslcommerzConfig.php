@@ -5,14 +5,21 @@ namespace Durrbar\PaymentSslcommerzDriver\Config;
 class SslcommerzConfig
 {
     protected string $sandbox;
+
     protected string $store_id;
+
     protected string $store_password;
+
     protected string $baseUrl;
+
     protected string $currency;
 
     protected string $successUrl;
+
     protected string $failedUrl;
+
     protected string $cancelUrl;
+
     protected string $ipnUrl;
 
     public function __construct()
@@ -66,10 +73,12 @@ class SslcommerzConfig
     {
         return $this->failedUrl;
     }
+
     public function getCancelUrl()
     {
         return $this->cancelUrl;
     }
+
     public function getIpnUrl()
     {
         return $this->ipnUrl;

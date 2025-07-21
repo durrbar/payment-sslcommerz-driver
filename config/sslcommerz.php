@@ -5,7 +5,7 @@ return [
     /**
      * Enable/Disable Sandbox mode
      */
-    'sandbox' => env('SSLCOMMERZ_SANDBOX', true),    
+    'sandbox' => env('SSLCOMMERZ_SANDBOX', true),
 
     /**
      * The API credentials given from Sslcommerz

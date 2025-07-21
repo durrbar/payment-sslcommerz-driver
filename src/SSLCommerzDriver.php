@@ -14,9 +14,13 @@ use Modules\Payment\Enums\PaymentStatus;
 class SslcommerzDriver extends BasePaymentDriver
 {
     protected SslcommerzConfig $config;
+
     protected SslcommerzHttpClient $httpClient;
+
     protected SslcommerzPayment $payment;
+
     protected SslcommerzRefund $refund;
+
     protected SslcommerzHandler $handler;
 
     public function __construct()
@@ -49,15 +53,16 @@ class SslcommerzDriver extends BasePaymentDriver
                 $this->updatePayment($payment, [
                     'status' => PaymentStatus::PROCESSING->value,
                 ]);
+
                 return [
                     'status' => 'success',
-                    'message' => 'Transaction is successfully completed.'
+                    'message' => 'Transaction is successfully completed.',
                 ];
             }
 
             return [
                 'status' => 'error',
-                'message' => 'Transaction verification failed.'
+                'message' => 'Transaction verification failed.',
             ];
         });
 
@@ -66,13 +71,13 @@ class SslcommerzDriver extends BasePaymentDriver
 
     public function handleFailure(array $data): array
     {
-        return $this->processPaymentStatus($data['tran_id'], PaymentStatus::PENDING->value, function ($order_details) use ($data) {
+        return $this->processPaymentStatus($data['tran_id'], PaymentStatus::PENDING->value, function ($order_details) {
             // Add logic for handling failure, such as logging or sending notifications
             $this->updatePaymentStatus($order_details['tran_id'], PaymentStatus::FAILED->value, []);
 
             return [
                 'status' => 'error',
-                'message' => 'Transaction failed. Order status updated to Failed.'
+                'message' => 'Transaction failed. Order status updated to Failed.',
             ];
         });
 
@@ -87,7 +92,7 @@ class SslcommerzDriver extends BasePaymentDriver
 
             return [
                 'status' => 'error',
-                'message' => 'Transaction cancelled. Order status updated to Cancelled.'
+                'message' => 'Transaction cancelled. Order status updated to Cancelled.',
             ];
         });
 
@@ -96,7 +101,7 @@ class SslcommerzDriver extends BasePaymentDriver
 
     public function handleIPN(array $data): array
     {
-        if (!isset($data['tran_id'])) {
+        if (! isset($data['tran_id'])) {
             return ['status' => 'error', 'message' => 'Invalid Data'];
         }
 
@@ -110,15 +115,16 @@ class SslcommerzDriver extends BasePaymentDriver
 
             if ($validation) {
                 $this->updatePaymentStatus($data['tran_id'], PaymentStatus::PROCESSING->value, []);
+
                 return [
                     'status' => 'success',
-                    'message' => 'Transaction is successfully Completed'
+                    'message' => 'Transaction is successfully Completed',
                 ];
             }
 
             return [
                 'status' => 'error',
-                'message' => 'Transaction validation failed'
+                'message' => 'Transaction validation failed',
             ];
         });
 
@@ -157,7 +163,7 @@ class SslcommerzDriver extends BasePaymentDriver
             'store_id' => $this->store_id,
             'store_password' => $this->store_password,
             'refund_amount' => $payment->amount,
-            'refund_remarks' => 'Customer requested'
+            'refund_remarks' => 'Customer requested',
         ];
 
         // Send the request to Sslcommerz to process the refund
@@ -184,7 +190,7 @@ class SslcommerzDriver extends BasePaymentDriver
             ? 'https://sandbox.sslcommerz.com'
             : 'https://secure.sslcommerz.com';
 
-        return $baseUrl . ($type === 'payment' ? '/gwprocess/v4/api.php' : '/validator/api/validationserverAPI.php');
+        return $baseUrl.($type === 'payment' ? '/gwprocess/v4/api.php' : '/validator/api/validationserverAPI.php');
     }
 
     private function postRequest(string $type, array $data): array
@@ -193,7 +199,7 @@ class SslcommerzDriver extends BasePaymentDriver
         $response = Http::post($url, $data);
 
         if ($response->failed()) {
-            throw new \Exception('Failed to communicate with Sslcommerz API: ' . $response->body());
+            throw new \Exception('Failed to communicate with Sslcommerz API: '.$response->body());
         }
 
         return $response->json();

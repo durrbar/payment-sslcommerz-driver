@@ -1,4 +1,5 @@
 <?php
+
 namespace Durrbar\PaymentSslcommerzDriver\Interface;
 
 interface SslcommerzInterface

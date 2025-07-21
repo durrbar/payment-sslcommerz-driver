@@ -5,8 +5,8 @@ namespace Durrbar\PaymentSslcommerzDriver\Payment;
 use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
 use Durrbar\PaymentSslcommerzDriver\Data\PaymentResponse;
 use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
-use Modules\Order\Models\Order;
 use Exception;
+use Modules\Order\Models\Order;
 
 class SslcommerzPayment
 {
@@ -28,8 +28,8 @@ class SslcommerzPayment
     /**
      * Constructor to initialize the Sslcommerz payment integration.
      *
-     * @param SslcommerzConfig $config Configuration object containing store credentials and callback URLs.
-     * @param SslcommerzHttpClient $httpClient HTTP client for making API requests.
+     * @param  SslcommerzConfig  $config  Configuration object containing store credentials and callback URLs.
+     * @param  SslcommerzHttpClient  $httpClient  HTTP client for making API requests.
      */
     public function __construct(SslcommerzConfig $config, SslcommerzHttpClient $httpClient)
     {
@@ -43,8 +43,9 @@ class SslcommerzPayment
      * This method prepares the necessary payload data, sends the request to the Sslcommerz API,
      * and returns a `PaymentResponse` object containing the API response.
      *
-     * @param mixed $payment Payment object containing order, customer, and shipping details.
+     * @param  mixed  $payment  Payment object containing order, customer, and shipping details.
      * @return PaymentResponse Response object containing the result of the payment request.
+     *
      * @throws Exception If the API response is invalid or empty.
      */
     public function initiatePayment(mixed $payment): PaymentResponse
@@ -70,7 +71,7 @@ class SslcommerzPayment
             return new PaymentResponse($response);
         } catch (Exception $e) {
             // Rethrow the exception with a descriptive error message.
-            throw new Exception("Payment failed: " . $e->getMessage());
+            throw new Exception('Payment failed: '.$e->getMessage());
         }
     }
 
@@ -80,11 +81,12 @@ class SslcommerzPayment
      * This method checks whether the payment transaction is valid by verifying the transaction ID,
      * amount, and currency against the response from the Sslcommerz validation API.
      *
-     * @param array $payload Validation payload received from Sslcommerz.
-     * @param string $transactionId The transaction ID to validate.
-     * @param float $amount The transaction amount to validate.
-     * @param string $currency The transaction currency (default: 'BDT').
+     * @param  array  $payload  Validation payload received from Sslcommerz.
+     * @param  string  $transactionId  The transaction ID to validate.
+     * @param  float  $amount  The transaction amount to validate.
+     * @param  string  $currency  The transaction currency (default: 'BDT').
      * @return bool True if the payment is valid; otherwise, false.
+     *
      * @throws Exception If validation fails due to missing or invalid data.
      */
     public function validatePayment(array $payload, string $transactionId, float $amount, string $currency = 'BDT'): bool
@@ -108,7 +110,7 @@ class SslcommerzPayment
         }
 
         // Check for required fields and transaction status.
-        if (!isset($response['status'], $response['tran_id'], $response['amount']) || $response['status'] === 'INVALID_TRANSACTION') {
+        if (! isset($response['status'], $response['tran_id'], $response['amount']) || $response['status'] === 'INVALID_TRANSACTION') {
             throw new Exception('Invalid transaction status.');
         }
 
@@ -131,8 +133,9 @@ class SslcommerzPayment
      * This method ensures the integrity of the response by comparing the computed hash
      * with the provided hash (`verify_sign`) from Sslcommerz.
      *
-     * @param array $data Response data containing the hash signature and verification key.
+     * @param  array  $data  Response data containing the hash signature and verification key.
      * @return bool True if the hash verification is successful; otherwise, false.
+     *
      * @throws Exception If the hash verification fails or required data is missing.
      */
     public function verifyHash(array $data): bool
@@ -174,7 +177,7 @@ class SslcommerzPayment
      *
      * This method combines order, customer, shipping, and product information into the payload data.
      *
-     * @param mixed $payment Payment object containing order, customer, and shipping details.
+     * @param  mixed  $payment  Payment object containing order, customer, and shipping details.
      */
     private function setParams(mixed $payment): void
     {
@@ -221,7 +224,7 @@ class SslcommerzPayment
     /**
      * Sets the customer details for the payment request.
      *
-     * @param mixed $customer Customer object containing name, email, address, and contact details.
+     * @param  mixed  $customer  Customer object containing name, email, address, and contact details.
      * @return array Array of customer-related data to be included in the payload.
      */
     private function setCustomerInfo(mixed $customer): array
@@ -243,8 +246,8 @@ class SslcommerzPayment
     /**
      * Sets the shipping information for the payment request.
      *
-     * @param mixed $order Order object containing shipping details.
-     * @param mixed $customer Customer object (used as a fallback for missing shipping details).
+     * @param  mixed  $order  Order object containing shipping details.
+     * @param  mixed  $customer  Customer object (used as a fallback for missing shipping details).
      * @return array Array of shipping-related data to be included in the payload.
      */
     private function setShipmentInfo(mixed $order, mixed $customer): array
@@ -264,8 +267,8 @@ class SslcommerzPayment
     /**
      * Sets the product details for the payment request.
      *
-     * @param mixed $payment Payment object containing total amount, currency, and transaction ID.
-     * @param mixed $order Order object containing product details.
+     * @param  mixed  $payment  Payment object containing total amount, currency, and transaction ID.
+     * @param  mixed  $order  Order object containing product details.
      * @return array Array of product-related data to be included in the payload.
      */
     private function setProductInfo(mixed $payment, mixed $order): array
@@ -283,7 +286,7 @@ class SslcommerzPayment
     /**
      * Retrieves the names of all products in the order.
      *
-     * @param Order $order Order object containing product details.
+     * @param  Order  $order  Order object containing product details.
      * @return string Comma-separated list of product names.
      */
     private function getProductNames(Order $order): string
@@ -294,7 +297,7 @@ class SslcommerzPayment
     /**
      * Retrieves the categories of all products in the order.
      *
-     * @param Order $order Order object containing product details.
+     * @param  Order  $order  Order object containing product details.
      * @return string Comma-separated list of unique product categories.
      */
     private function getProductCategories(Order $order): string
@@ -313,7 +316,7 @@ class SslcommerzPayment
      *     - 'travel-vertical': For transactions related to travel services.
      *     - 'telecom-vertical': For transactions related to telecom services.
      *
-     * @param Order $order Order object containing product details.
+     * @param  Order  $order  Order object containing product details.
      * @return string Product profile ('physical-goods', 'non-physical-goods', etc.).
      */
     private function setProductProfile(Order $order): string
@@ -335,7 +338,7 @@ class SslcommerzPayment
     /**
      * Merges additional data into the payload.
      *
-     * @param array $additionalData Data to be merged into the existing payload.
+     * @param  array  $additionalData  Data to be merged into the existing payload.
      */
     private function mergeData(array $additionalData): void
     {

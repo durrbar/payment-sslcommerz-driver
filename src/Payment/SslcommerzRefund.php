@@ -10,6 +10,7 @@ use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
 class SslcommerzRefund
 {
     protected SslcommerzConfig $config;
+
     protected SslcommerzHttpClient $httpClient;
 
     /**

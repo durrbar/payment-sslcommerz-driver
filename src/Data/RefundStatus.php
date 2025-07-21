@@ -6,7 +6,8 @@ class RefundStatus
 {
     public function __construct(
         protected ?array $data
-    ) {}
+    ) {
+    }
 
     /**
      * Get the status of the transaction.
