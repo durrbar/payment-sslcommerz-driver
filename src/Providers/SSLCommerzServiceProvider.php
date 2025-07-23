@@ -14,7 +14,7 @@ class SslcommerzServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../config/sslcommerz.php' => config_path('sslcommerz.php'),
+            __DIR__.'/../../config/sslcommerz.php' => config_path('sslcommerz.php'),
         ], 'sslcommerz-config');
     }
 }
