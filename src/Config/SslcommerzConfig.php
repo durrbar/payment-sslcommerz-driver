@@ -1,26 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver\Config;
 
-class SslcommerzConfig
+final class SslcommerzConfig
 {
-    protected string $sandbox;
+    private string $sandbox;
 
-    protected string $store_id;
+    private string $store_id;
 
-    protected string $store_password;
+    private string $store_password;
 
-    protected string $baseUrl;
+    private string $baseUrl;
 
-    protected string $currency;
+    private string $currency;
 
-    protected string $successUrl;
+    private string $successUrl;
 
-    protected string $failedUrl;
+    private string $failedUrl;
 
-    protected string $cancelUrl;
+    private string $cancelUrl;
 
-    protected string $ipnUrl;
+    private string $ipnUrl;
 
     public function __construct()
     {
@@ -35,13 +37,6 @@ class SslcommerzConfig
         $this->failedUrl = config('payment.providers.sslcommerz.route.failure');
         $this->cancelUrl = config('payment.providers.sslcommerz.route.cancel');
         $this->ipnUrl = config('payment.providers.sslcommerz.route.ipn');
-    }
-
-    protected function setBaseUrl()
-    {
-        $this->baseUrl = $this->sandbox
-            ? 'https://sandbox.sslcommerz.com'
-            : 'https://secure.sslcommerz.com';
     }
 
     public function getBaseUrl()
@@ -82,5 +77,12 @@ class SslcommerzConfig
     public function getIpnUrl()
     {
         return $this->ipnUrl;
+    }
+
+    private function setBaseUrl()
+    {
+        $this->baseUrl = $this->sandbox
+            ? 'https://sandbox.sslcommerz.com'
+            : 'https://secure.sslcommerz.com';
     }
 }

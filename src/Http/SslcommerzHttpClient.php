@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver\Http;
 
 use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
-class SslcommerzHttpClient
+final class SslcommerzHttpClient
 {
-    protected $config;
+    private $config;
 
     public function __construct(SslcommerzConfig $config)
     {

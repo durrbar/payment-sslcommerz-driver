@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
+use Durrbar\PaymentSslcommerzDriver\SslcommerzDriver;
+
 return [
-    'driver' => \Durrbar\PaymentSslcommerzDriver\SslcommerzDriver::class,
+    'driver' => SslcommerzDriver::class,
     /**
      * Enable/Disable Sandbox mode
      */

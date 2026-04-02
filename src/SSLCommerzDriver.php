@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver;
 
 use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
@@ -7,11 +9,12 @@ use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
 use Durrbar\PaymentSslcommerzDriver\Payment\SslcommerzHandler;
 use Durrbar\PaymentSslcommerzDriver\Payment\SslcommerzPayment;
 use Durrbar\PaymentSslcommerzDriver\Payment\SslcommerzRefund;
+use Exception;
 use Illuminate\Support\Facades\Http;
 use Modules\Payment\Drivers\BasePaymentDriver;
 use Modules\Payment\Enums\PaymentStatus;
 
-class SslcommerzDriver extends BasePaymentDriver
+final class SslcommerzDriver extends BasePaymentDriver
 {
     protected SslcommerzConfig $config;
 
@@ -30,6 +33,12 @@ class SslcommerzDriver extends BasePaymentDriver
         $this->payment = new SslcommerzPayment($this->config, $this->httpClient);
         $this->refund = new SslcommerzRefund($this->config, $this->httpClient);
         $this->handler = new SslcommerzHandler($this->config, $this->httpClient, $this);
+    }
+
+    public static function validateResponse(array $data): bool
+    {
+        // Logic to validate IPN (you can add more complex validation based on Sslcommerz documentation)
+        return isset($data['status']) && $data['status'] === 'VALID';
     }
 
     public function initiatePayment(mixed $payment): array
@@ -143,7 +152,7 @@ class SslcommerzDriver extends BasePaymentDriver
         $response = $this->postRequest('validate', $payload);
 
         if ($response['status'] !== 'VALID') {
-            throw new \Exception('Payment verification failed');
+            throw new Exception('Payment verification failed');
         }
 
         return [
@@ -170,7 +179,7 @@ class SslcommerzDriver extends BasePaymentDriver
         $response = $this->postRequest('refund', $payload);
 
         if ($response['status'] !== 'SUCCESS') {
-            throw new \Exception('Refund failed');
+            throw new Exception('Refund failed');
         }
 
         $payment->update(['refund_ref_id' => $response['refund_ref_id']]);
@@ -199,15 +208,9 @@ class SslcommerzDriver extends BasePaymentDriver
         $response = Http::post($url, $data);
 
         if ($response->failed()) {
-            throw new \Exception('Failed to communicate with Sslcommerz API: '.$response->body());
+            throw new Exception('Failed to communicate with Sslcommerz API: '.$response->body());
         }
 
         return $response->json();
-    }
-
-    public static function validateResponse(array $data): bool
-    {
-        // Logic to validate IPN (you can add more complex validation based on Sslcommerz documentation)
-        return isset($data['status']) && $data['status'] === 'VALID';
     }
 }

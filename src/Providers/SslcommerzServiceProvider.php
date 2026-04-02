@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class SslcommerzServiceProvider extends ServiceProvider
+final class SslcommerzServiceProvider extends ServiceProvider
 {
     public function register()
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver\Payment;
 
 use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
@@ -8,22 +10,22 @@ use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
 use Exception;
 use Modules\Order\Models\Order;
 
-class SslcommerzPayment
+final class SslcommerzPayment
 {
     /**
      * Configuration object for Sslcommerz integration.
      */
-    protected SslcommerzConfig $config;
+    private SslcommerzConfig $config;
 
     /**
      * HTTP client for making API requests to Sslcommerz.
      */
-    protected SslcommerzHttpClient $httpClient;
+    private SslcommerzHttpClient $httpClient;
 
     /**
      * Payload data to be sent with the API request.
      */
-    protected array $data = [];
+    private array $data = [];
 
     /**
      * Constructor to initialize the Sslcommerz payment integration.
@@ -115,7 +117,7 @@ class SslcommerzPayment
         }
 
         // Verify the transaction ID.
-        if (trim($transactionId) !== trim($response['tran_id'])) {
+        if (mb_trim($transactionId) !== mb_trim($response['tran_id'])) {
             throw new Exception('Transaction ID mismatch.');
         }
 
@@ -124,7 +126,7 @@ class SslcommerzPayment
             return abs($amount - $response['amount']) < 1;
         }
 
-        return trim($currency) === trim($response['currency_type']) && abs($amount - $response['currency_amount']) < 1;
+        return mb_trim($currency) === mb_trim($response['currency_type']) && abs($amount - $response['currency_amount']) < 1;
     }
 
     /**
@@ -162,7 +164,7 @@ class SslcommerzPayment
         foreach ($dataToHash as $key => $value) {
             $hashString .= "$key=$value&";
         }
-        $hashString = rtrim($hashString, '&');
+        $hashString = mb_rtrim($hashString, '&');
 
         // Compare the computed hash with the provided hash signature.
         if (md5($hashString) !== $data['verify_sign']) {
@@ -324,15 +326,19 @@ class SslcommerzPayment
         // Determine the product profile based on the items in the order.
         if ($order->items->contains('category.name', 'Airline Tickets')) {
             return 'airline-tickets';
-        } elseif ($order->items->contains('category.name', 'Travel Services')) {
-            return 'travel-vertical';
-        } elseif ($order->items->contains('category.name', 'Telecom Services')) {
-            return 'telecom-vertical';
-        } elseif ($order->items->every(fn ($item) => $item->is_physical)) {
-            return 'physical-goods';
-        } else {
-            return 'non-physical-goods';
         }
+        if ($order->items->contains('category.name', 'Travel Services')) {
+            return 'travel-vertical';
+        }
+        if ($order->items->contains('category.name', 'Telecom Services')) {
+            return 'telecom-vertical';
+        }
+        if ($order->items->every(fn ($item) => $item->is_physical)) {
+            return 'physical-goods';
+        }
+
+        return 'non-physical-goods';
+
     }
 
     /**

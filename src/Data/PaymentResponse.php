@@ -1,20 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver\Data;
 
-class PaymentResponse
+final class PaymentResponse
 {
     public function __construct(
-        protected ?array $data = null
-    ) {
-    }
+        private ?array $data = null
+    ) {}
 
     /**
      * Get the status of the payment response in lowercase.
      */
     public function status(): ?string
     {
-        return isset($this->data['status']) ? strtolower($this->data['status']) : null;
+        return isset($this->data['status']) ? mb_strtolower($this->data['status']) : null;
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver\Payment;
 
 use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
@@ -7,11 +9,11 @@ use Durrbar\PaymentSslcommerzDriver\Data\RefundResponse;
 use Durrbar\PaymentSslcommerzDriver\Data\RefundStatus;
 use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
 
-class SslcommerzRefund
+final class SslcommerzRefund
 {
-    protected SslcommerzConfig $config;
+    private SslcommerzConfig $config;
 
-    protected SslcommerzHttpClient $httpClient;
+    private SslcommerzHttpClient $httpClient;
 
     /**
      * Create a new instance of Sslcommerz.

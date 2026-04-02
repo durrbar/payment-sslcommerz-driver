@@ -1,20 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver\Data;
 
-class RefundStatus
+final class RefundStatus
 {
     public function __construct(
-        protected ?array $data
-    ) {
-    }
+        private ?array $data
+    ) {}
 
     /**
      * Get the status of the transaction.
      */
     public function status(): ?string
     {
-        return isset($this->data['status']) ? strtolower($this->data['status']) : null;
+        return isset($this->data['status']) ? mb_strtolower($this->data['status']) : null;
     }
 
     /**

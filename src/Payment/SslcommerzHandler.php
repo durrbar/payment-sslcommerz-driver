@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Durrbar\PaymentSslcommerzDriver\Payment;
 
 use Durrbar\PaymentSslcommerzDriver\Config\SslcommerzConfig;
 use Durrbar\PaymentSslcommerzDriver\Http\SslcommerzHttpClient;
 use Modules\Payment\Drivers\BasePaymentDriver;
 
-class SslcommerzHandler
+final class SslcommerzHandler
 {
-    protected $config;
+    private $config;
 
-    protected $httpClient;
+    private $httpClient;
 
-    protected $driver;
+    private $driver;
 
     public function __construct(SslcommerzConfig $config, SslcommerzHttpClient $httpClient, BasePaymentDriver $driver)
     {
